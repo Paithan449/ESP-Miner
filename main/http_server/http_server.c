@@ -478,7 +478,42 @@ static esp_err_t PATCH_update_settings(httpd_req_t * req)
     if ((item = cJSON_GetObjectItem(root, "overclockEnabled")) != NULL) {
         nvs_config_set_u16(NVS_CONFIG_OVERCLOCK_ENABLED, item->valueint);
     }
-
+    if ((item = cJSON_GetObjectItem(root, "autospeed")) != NULL) {
+        nvs_config_set_u16(NVS_CONFIG_AUTO_SPEED, item->valueint);
+    }
+    if ((item = cJSON_GetObjectItem(root, "powerlow")) != NULL) {
+        nvs_config_set_u16(NVS_CONFIG_POWER_LOW, item->valueint);
+    } 
+    if ((item = cJSON_GetObjectItem(root, "powerhigh")) != NULL) {
+        nvs_config_set_u16(NVS_CONFIG_POWER_HIGH, item->valueint);
+    }
+    if ((item = cJSON_GetObjectItem(root, "asicvoltlow")) != NULL) {
+        nvs_config_set_u16(NVS_CONFIG_ASV_LOW, item->valueint);
+    } 
+    if ((item = cJSON_GetObjectItem(root, "asicvolthigh")) != NULL) {
+        nvs_config_set_u16(NVS_CONFIG_ASV_HIGH, item->valueint);
+    }
+    if ((item = cJSON_GetObjectItem(root, "asictemplow")) != NULL) {
+        nvs_config_set_u16(NVS_CONFIG_AST_LOW, item->valueint);
+    } 
+    if ((item = cJSON_GetObjectItem(root, "asictemphigh")) != NULL) {
+        nvs_config_set_u16(NVS_CONFIG_AST_HIGH, item->valueint);
+    }
+    if ((item = cJSON_GetObjectItem(root, "vrtemplow")) != NULL) {
+        nvs_config_set_u16(NVS_CONFIG_VRT_LOW, item->valueint);
+    } 
+    if ((item = cJSON_GetObjectItem(root, "vrtemphigh")) != NULL) {
+        nvs_config_set_u16(NVS_CONFIG_VRT_HIGH, item->valueint);
+    }
+    if ((item = cJSON_GetObjectItem(root, "hashlow")) != NULL) {
+        nvs_config_set_u16(NVS_CONFIG_HASH_LOW, item->valueint);
+    } 
+    if ((item = cJSON_GetObjectItem(root, "hashhigh")) != NULL) {
+        nvs_config_set_u16(NVS_CONFIG_HASH_HIGH, item->valueint);
+    }
+    if ((item = cJSON_GetObjectItem(root, "fantarget")) != NULL) {
+        nvs_config_set_u16(NVS_CONFIG_FAN_TARGET, item->valueint);
+    }
     cJSON_Delete(root);
     httpd_resp_send_chunk(req, NULL, 0);
     return ESP_OK;
@@ -610,7 +645,20 @@ static esp_err_t GET_system_info(httpd_req_t * req)
 
     cJSON_AddNumberToObject(root, "fanspeed", GLOBAL_STATE->POWER_MANAGEMENT_MODULE.fan_perc);
     cJSON_AddNumberToObject(root, "fanrpm", GLOBAL_STATE->POWER_MANAGEMENT_MODULE.fan_rpm);
-    
+
+    cJSON_AddNumberToObject(root, "autospeed", nvs_config_get_u16(NVS_CONFIG_AUTO_SPEED, 0));
+    cJSON_AddNumberToObject(root, "powerlow", nvs_config_get_u16(NVS_CONFIG_POWER_LOW, 22));
+    cJSON_AddNumberToObject(root, "powerhigh", nvs_config_get_u16(NVS_CONFIG_POWER_HIGH, 24));
+    cJSON_AddNumberToObject(root, "asicvoltlow", nvs_config_get_u16(NVS_CONFIG_ASV_LOW, 1080));
+    cJSON_AddNumberToObject(root, "asicvolthigh", nvs_config_get_u16(NVS_CONFIG_ASV_HIGH, 1100));
+    cJSON_AddNumberToObject(root, "asictemplow", nvs_config_get_u16(NVS_CONFIG_AST_LOW, 63));
+    cJSON_AddNumberToObject(root, "asictemphigh", nvs_config_get_u16(NVS_CONFIG_AST_HIGH, 65));
+    cJSON_AddNumberToObject(root, "vrtemplow", nvs_config_get_u16(NVS_CONFIG_VRT_LOW, 75));
+    cJSON_AddNumberToObject(root, "vrtemphigh", nvs_config_get_u16(NVS_CONFIG_VRT_HIGH, 80));
+    cJSON_AddNumberToObject(root, "hashlow", nvs_config_get_u16(NVS_CONFIG_HASH_LOW, 50));
+    cJSON_AddNumberToObject(root, "hashhigh", nvs_config_get_u16(NVS_CONFIG_HASH_HIGH, 625));
+    cJSON_AddNumberToObject(root, "fantarget", nvs_config_get_u16(NVS_CONFIG_FAN_TARGET, 80));
+
     if (GLOBAL_STATE->SYSTEM_MODULE.power_fault > 0) {
         cJSON_AddStringToObject(root, "power_fault", VCORE_get_fault_string(GLOBAL_STATE));
     }

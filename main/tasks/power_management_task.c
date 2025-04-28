@@ -26,6 +26,8 @@
 #define TPS546_THROTTLE_TEMP 105.0
 #define TPS546_MAX_TEMP 145.0
 
+#define ADJUSTMENT_LOOPS 30
+
 static const char * TAG = "power_management";
 
 // static float _fbound(float value, float lower_bound, float upper_bound)
@@ -79,9 +81,13 @@ void POWER_MANAGEMENT_task(void * pvParameters)
     vTaskDelay(500 / portTICK_PERIOD_MS);
     uint16_t last_core_voltage = 0.0;
     uint16_t last_asic_frequency = power_management->frequency_value;
+    uint16_t adjustmet_counter = 0.0;
+    int16_t corevoltage = 0;
+    double fanspread = 0;
+    double tempspread = 0;
     
     while (1) {
-
+        adjustmet_counter++;
         power_management->voltage = Power_get_input_voltage(GLOBAL_STATE);
         power_management->power = Power_get_power(GLOBAL_STATE);
 
@@ -89,6 +95,7 @@ void POWER_MANAGEMENT_task(void * pvParameters)
         power_management->chip_temp_avg = Thermal_get_chip_temp(GLOBAL_STATE);
 
         power_management->vr_temp = Power_get_vreg_temp(GLOBAL_STATE);
+        corevoltage = VCORE_get_voltage_mv(GLOBAL_STATE);
 
 
         // ASIC Thermal Diode will give bad readings if the ASIC is turned off
@@ -113,28 +120,80 @@ void POWER_MANAGEMENT_task(void * pvParameters)
             exit(EXIT_FAILURE);
         }
 
-        if (nvs_config_get_u16(NVS_CONFIG_AUTO_FAN_SPEED, 1) == 1) {
-
-            power_management->fan_perc = (float)automatic_fan_speed(power_management->chip_temp_avg, GLOBAL_STATE);
-
-        } else {
-            float fs = (float) nvs_config_get_u16(NVS_CONFIG_FAN_SPEED, 100);
-            power_management->fan_perc = fs;
-            Thermal_set_fan_percent(GLOBAL_STATE->device_model, (float) fs / 100.0);
-        }
-
-        // Read the state of plug sense pin
-        // if (power_management->HAS_PLUG_SENSE) {
-        //     int gpio_plug_sense_state = gpio_get_level(GPIO_PLUG_SENSE);
-        //     if (gpio_plug_sense_state == 0) {
-        //         // turn ASIC off
-        //         gpio_set_level(GPIO_ASIC_ENABLE, 1);
-        //     }
-        // }
-
         // New voltage and frequency adjustment code
         uint16_t core_voltage = nvs_config_get_u16(NVS_CONFIG_ASIC_VOLTAGE, CONFIG_ASIC_VOLTAGE);
         uint16_t asic_frequency = nvs_config_get_u16(NVS_CONFIG_ASIC_FREQ, CONFIG_ASIC_FREQUENCY);
+    
+        if(nvs_config_get_u16(NVS_CONFIG_AUTO_SPEED, 0)== 0)
+        {
+            if (nvs_config_get_u16(NVS_CONFIG_AUTO_FAN_SPEED, 1) == 1) {
+
+                power_management->fan_perc = (float)automatic_fan_speed(power_management->chip_temp_avg, GLOBAL_STATE);
+    
+            } else {
+                float fs = (float) nvs_config_get_u16(NVS_CONFIG_FAN_SPEED, 100);
+                power_management->fan_perc = fs;
+                Thermal_set_fan_percent(GLOBAL_STATE->device_model, (float) fs / 100.0);
+            }
+        }
+        else // Auto speed active
+        {
+            if(power_management->chip_temp_avg > nvs_config_get_u16(NVS_CONFIG_AST_LOW, 60))
+            {
+                fanspread = 100 - nvs_config_get_u16(NVS_CONFIG_FAN_TARGET, 80);
+                tempspread = nvs_config_get_u16(NVS_CONFIG_AST_HIGH, 60) - nvs_config_get_u16(NVS_CONFIG_AST_LOW, 60);
+                power_management->fan_perc = ((power_management->chip_temp_avg - nvs_config_get_u16(NVS_CONFIG_AST_LOW, 60)) / tempspread) * fanspread + nvs_config_get_u16(NVS_CONFIG_FAN_TARGET, 80);
+            }
+            else
+            {
+                power_management->fan_perc = (power_management->chip_temp_avg / nvs_config_get_u16(NVS_CONFIG_AST_LOW, 60)) * (nvs_config_get_u16(NVS_CONFIG_FAN_TARGET, 80));
+            }
+
+            if(power_management->fan_perc > 100)
+            {
+                power_management->fan_perc = 100;
+            }                    
+            Thermal_set_fan_percent(GLOBAL_STATE->device_model, (float) power_management->fan_perc / 100.0);                
+
+            if(adjustmet_counter >= ADJUSTMENT_LOOPS)
+            {
+                adjustmet_counter=0;
+
+                if(power_management->fan_perc > nvs_config_get_u16(NVS_CONFIG_FAN_TARGET, 80)+1)
+                {
+                    nvs_config_set_u16(NVS_CONFIG_ASIC_FREQ, asic_frequency - 1);
+                }
+                else
+                {
+                    if(power_management->power < nvs_config_get_u16(NVS_CONFIG_POWER_LOW, 0) && 
+                    corevoltage > nvs_config_get_u16(NVS_CONFIG_ASV_HIGH, 1000) &&
+                    power_management->chip_temp_avg < nvs_config_get_u16(NVS_CONFIG_AST_LOW, 60) &&
+                    power_management->vr_temp < nvs_config_get_u16(NVS_CONFIG_VRT_LOW, 60) &&
+                    power_management->frequency_value < nvs_config_get_u16(NVS_CONFIG_HASH_HIGH, 625) &&
+                    power_management->fan_perc < nvs_config_get_u16(NVS_CONFIG_FAN_TARGET, 0)
+                    )
+                    {
+                        nvs_config_set_u16(NVS_CONFIG_ASIC_FREQ, asic_frequency + 1);           
+                    }    
+                }
+            }
+            if(power_management->power > nvs_config_get_u16(NVS_CONFIG_POWER_HIGH, 0) || 
+            corevoltage < nvs_config_get_u16(NVS_CONFIG_ASV_LOW, 1000) ||
+            power_management->chip_temp_avg > nvs_config_get_u16(NVS_CONFIG_AST_HIGH, 60) ||
+            power_management->vr_temp > nvs_config_get_u16(NVS_CONFIG_VRT_HIGH, 60)
+            )
+            {
+                if(power_management->frequency_value > nvs_config_get_u16(NVS_CONFIG_HASH_LOW, 625))
+                {
+                    nvs_config_set_u16(NVS_CONFIG_ASIC_FREQ, asic_frequency - 1);
+                }
+                       
+            }               
+        }
+
+
+
+
 
         if (core_voltage != last_core_voltage) {
             ESP_LOGI(TAG, "setting new vcore voltage to %umV", core_voltage);

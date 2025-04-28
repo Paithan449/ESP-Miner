@@ -12,6 +12,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { EditComponent } from './components/edit/edit.component';
 import { PoolComponent } from './components/pool/pool.component';
+import { AutospeedComponent } from './components/autospeed/autospeed.component';
 import { NetworkEditComponent } from './components/network-edit/network.edit.component';
 import { HomeComponent } from './components/home/home.component';
 import { LoadingComponent } from './components/loading/loading.component';
@@ -41,7 +42,8 @@ const components = [
   NetworkComponent,
   SettingsComponent,
   LogsComponent,
-  PoolComponent
+  PoolComponent,
+  AutospeedComponent
 ];
 
 @NgModule({
@@ -56,6 +58,7 @@ const components = [
     ThemeConfigComponent,
     DesignComponent,
     PoolComponent,
+    AutospeedComponent,
     DialogListComponent
   ],
   imports: [

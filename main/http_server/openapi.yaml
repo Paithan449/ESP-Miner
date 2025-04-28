@@ -135,6 +135,18 @@ components:
         - vrTemp
         - wifiStatus
         - wifiRSSI
+        - autospeed
+        - powerlow
+        - powerhigh
+        - asicvoltlow
+        - asicvolthigh
+        - asictemplow
+        - asictemphigh
+        - vrtemplow
+        - vrtemphigh
+        - hashlow
+        - hashhigh
+        - fantarget
       properties:
         ASICModel:
           type: string
@@ -285,7 +297,43 @@ components:
         wifiRSSI:
           type: number
           description: WiFi signal strength
-
+        autospeed:
+          type: number
+          description: Auto speed om/off
+        powerlow:
+          type: number
+          description: Power low
+        powerhigh:
+          type: number
+          description: Power high
+        asicvoltlow:
+          type: number
+          description: ASIC Volt low
+        asicvolthigh:
+          type: number
+          description: ASIC volt high
+        asictemplow:
+          type: number
+          description: ASIC Temp low
+        asictemphigh:
+          type: number
+          description: ASIC Temp high
+        vrtemplow:
+          type: number
+          description: VR Temp low
+        vrtemphigh:
+          type: number
+          description: VR Temp high
+        hashlow:
+          type: number
+          description: Hash low
+        hashhigh:
+          type: number
+          description: Hash high
+        fantarget:
+          type: number
+          description: Fan target
+  
     Settings:
       type: object
       properties:
@@ -411,8 +459,90 @@ components:
           maximum: 100
           examples:
             - 80
+        autospeed:
+          type: integer
+          description: Whether to enable automatic speed control (0=manual, 1=auto)
+          enum: [0, 1]
+          examples:
+            - 0
+        powerlow:
+          type: integer
+          description: Power low
+          minimum: 0
+          maximum: 50
+          examples:
+            - 22
+        powerhigh:
+          type: integer
+          description: Power high
+          minimum: 0
+          maximum: 50
+          examples:
+            - 24
+        asicvoltlow:
+          type: integer
+          description: ASIC Volt low
+          minimum: 1000
+          maximum: 1500
+          examples:
+            - 1200
+        asicvolthigh:
+          type: integer
+          description: ASIC Volt high
+          minimum: 1000
+          maximum: 1500
+          examples:
+            - 1200
+        asictemplow:
+          type: integer
+          description: ASIC Temp low
+          minimum: 30
+          maximum: 90
+          examples:
+            - 63
+        asictemphigh:
+          type: integer
+          description: ASIC Temp high
+          minimum: 30
+          maximum: 90
+          examples:
+            - 65
+        vrtemplow:
+          type: integer
+          description: VR Temp low
+          minimum: 30
+          maximum: 120
+          examples:
+            - 75
+        vrtemphigh:
+          type: integer
+          description: VR Temp high
+          minimum: 30
+          maximum: 120
+          examples:
+            - 80
+        hashlow:
+          type: integer
+          description: Hash low
+          minimum: 50
+          maximum: 1000
+          examples:
+            - 50
+        hashhigh:
+          type: integer
+          description: Hash high
+          minimum: 50
+          maximum: 1000
+          examples:
+            - 625
+        fantarget:
+          type: integer
+          description: Hash high
+          minimum: 50
+          maximum: 95
+          examples:
+            - 80
       additionalProperties: true
-
   responses:
     UnauthorizedError:
       description: Unauthorized - Client not in allowed network range

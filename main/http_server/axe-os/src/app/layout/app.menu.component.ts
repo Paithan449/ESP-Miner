@@ -30,6 +30,7 @@ export class AppMenuComponent implements OnInit {
                     { label: 'Settings', icon: 'pi pi-fw pi-cog', routerLink: ['settings'] },
                     { label: 'Logs', icon: 'pi pi-fw pi-list', routerLink: ['logs'] },
                     { label: 'Whitepaper', icon: 'pi pi-fw pi-bitcoin', command: () => window.open('/bitcoin.pdf', '_blank') },
+                    { label: 'Auto Speed', icon: 'pi pi-fw pi-gauge', routerLink: ['autospeed'] },
                 ]
             }
         ];

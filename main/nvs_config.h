@@ -31,6 +31,18 @@
 #define NVS_CONFIG_OVERHEAT_MODE "overheat_mode"
 #define NVS_CONFIG_OVERCLOCK_ENABLED "oc_enabled"
 #define NVS_CONFIG_SWARM "swarmconfig"
+#define NVS_CONFIG_AUTO_SPEED "autospeed"
+#define NVS_CONFIG_POWER_LOW "powerlow"
+#define NVS_CONFIG_POWER_HIGH "powerhigh"
+#define NVS_CONFIG_ASV_LOW "asicvoltlow"
+#define NVS_CONFIG_ASV_HIGH "asicvolthigh"
+#define NVS_CONFIG_AST_LOW "asictemplow"
+#define NVS_CONFIG_AST_HIGH "asictemphigh"
+#define NVS_CONFIG_VRT_LOW "vrtemplow"
+#define NVS_CONFIG_VRT_HIGH "vrtemphigh"
+#define NVS_CONFIG_HASH_LOW "hashlow"
+#define NVS_CONFIG_HASH_HIGH "hashhigh"
+#define NVS_CONFIG_FAN_TARGET "fantarget"
 
 // Theme configuration
 #define NVS_CONFIG_THEME_SCHEME "themescheme"

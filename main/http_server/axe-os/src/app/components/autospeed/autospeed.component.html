@@ -1,0 +1,122 @@
+<div class="grid">
+    <div class="col-12">
+    <form [formGroup]="form" *ngIf="form != null">
+
+        <div class="card">
+            <h5>Auto Speed Configuration</h5>
+            <div class="field-checkbox">
+                <p-checkbox name="autospeed" formControlName="autospeed" inputId="autospeed"
+                    [binary]="true"></p-checkbox>
+                <label for="autospeed">Automatic Speed Control</label>
+            </div>            
+            <div class="field grid p-fluid">
+                <label htmlFor="powerlow" class="col-12 mb-2 md:col-2 md:mb-0">Power Increase:</label>
+                <div class="col-12 md:col-10">
+                    <input pInputText id="powerlow" type="number" formControlName="powerlow" />
+                    <div>
+                        <small>Power level below which hash freq can be increased</small>
+                    </div>
+                </div>
+            </div>
+            <div class="field grid p-fluid">
+                <label htmlFor="powerhigh" class="col-12 mb-2 md:col-2 md:mb-0">Power Decrease:</label>
+                <div class="col-12 md:col-10">
+                    <input pInputText id="powerhigh" type="number" formControlName="powerhigh" />
+                    <div>
+                        <small>Power level above which hash freq will be deccreased</small>
+                    </div>
+                </div>
+            </div>
+            <div class="field grid p-fluid">
+                <label htmlFor="asicvolthigh" class="col-12 mb-2 md:col-2 md:mb-0">ASIC Voltage Increase:</label>
+                <div class="col-12 md:col-10">
+                    <input pInputText id="asicvolthigh" type="number" formControlName="asicvolthigh" />
+                    <div>
+                        <small>ASIC Voltage above which hash freq can be increased</small>
+                    </div>
+                </div>
+            </div>
+            <div class="field grid p-fluid">
+                <label htmlFor="asicvoltlow" class="col-12 mb-2 md:col-2 md:mb-0">ASIC Voltage Decrease:</label>
+                <div class="col-12 md:col-10">
+                    <input pInputText id="asicvoltlow" type="number" formControlName="asicvoltlow" />
+                    <div>
+                        <small>ASIC Voltage below which hash freq will be deccreased</small>
+                    </div>
+                </div>
+            </div>            
+            <div class="field grid p-fluid">
+                <label htmlFor="asictemplow" class="col-12 mb-2 md:col-2 md:mb-0">ASIC Temp Increase:</label>
+                <div class="col-12 md:col-10">
+                    <input pInputText id="asictemplow" type="number" formControlName="asictemplow" />
+                    <div>
+                        <small>ASIC temperature below which hash freq can be increased</small>
+                    </div>
+                </div>
+            </div>
+            <div class="field grid p-fluid">
+                <label htmlFor="asictemphigh" class="col-12 mb-2 md:col-2 md:mb-0">ASIC Temp Decrease:</label>
+                <div class="col-12 md:col-10">
+                    <input pInputText id="asictemphigh" type="number" formControlName="asictemphigh" />
+                    <div>
+                        <small>ASIC Temperature above which hash freq will be deccreased</small>
+                    </div>
+                </div>
+            </div>            
+            <div class="field grid p-fluid">
+                <label htmlFor="vrtemplow" class="col-12 mb-2 md:col-2 md:mb-0">VR Temp Increase:</label>
+                <div class="col-12 md:col-10">
+                    <input pInputText id="vrtemplow" type="number" formControlName="vrtemplow" />
+                    <div>
+                        <small>Voltage regulator temperature below which hash freq can be increased</small>
+                    </div>
+                </div>
+            </div>
+            <div class="field grid p-fluid">
+                <label htmlFor="vrtemphigh" class="col-12 mb-2 md:col-2 md:mb-0">VR Temp Decrease:</label>
+                <div class="col-12 md:col-10">
+                    <input pInputText id="vrtemphigh" type="number" formControlName="vrtemphigh" />
+                    <div>
+                        <small>Voltage regulator temperature above which hash freq will be deccreased</small>
+                    </div>
+                </div>
+            </div>            
+            <div class="field grid p-fluid">
+                <label htmlFor="hashlow" class="col-12 mb-2 md:col-2 md:mb-0">Hash Lower Limit:</label>
+                <div class="col-12 md:col-10">
+                    <input pInputText id="hashlow" type="number" formControlName="hashlow" />
+                    <div>
+                        <small>Lowest value hash freq can be set to</small>
+                    </div>
+                </div>
+            </div>
+            <div class="field grid p-fluid">
+                <label htmlFor="hashhigh" class="col-12 mb-2 md:col-2 md:mb-0">Hash Upper Limit:</label>
+                <div class="col-12 md:col-10">
+                    <input pInputText id="hashhigh" type="number" formControlName="hashhigh" />
+                    <div>
+                        <small>Highest value hash freq can be set to</small>
+                    </div>
+                </div>
+            </div>
+            <div class="field grid p-fluid">
+                <label htmlFor="fantarget" class="col-12 mb-2 md:col-2 md:mb-0">Fan Target:</label>
+                <div class="col-12 md:col-10">
+                    <input pInputText id="fantarget" type="number" formControlName="fantarget" />
+                    <div>
+                        <small>Target fan speed at ASIC low temperature</small>
+                    </div>
+                </div>
+            </div>
+
+
+        <div class="mt-2">
+            <button pButton [disabled]="!form.dirty || form.invalid" (click)="updateSystem()"
+                class="btn btn-primary mr-2">Save</button>
+        </div>
+
+
+        </div>
+    </form>
+    </div>
+</div>

@@ -62,5 +62,8 @@
         "ssid"
     ],
     "idf.port": "/dev/ttyACM0",
-    "C_Cpp.intelliSenseEngine": "Tag Parser"
+    "C_Cpp.intelliSenseEngine": "Tag Parser",
+    "idf.customExtraVars": {
+        "IDF_TARGET": "esp32s3"
+    }
 }

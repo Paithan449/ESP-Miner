@@ -67,7 +67,20 @@ export class SystemService {
 
           boardtemp1: 30,
           boardtemp2: 40,
-          overheat_mode: 0
+          overheat_mode: 0,
+
+          autospeed: 0,
+          powerlow: 22,
+          powerhigh: 24,
+          asicvoltlow: 1080,
+          asicvolthigh: 1100,
+          asictemplow: 63,
+          asictemphigh: 65,
+          vrtemplow: 75,
+          vrtemphigh: 80,
+          hashlow: 400,
+          hashhigh: 625,
+          fantarget: 80
         }
       ).pipe(delay(1000));
     }
@@ -80,7 +93,6 @@ export class SystemService {
   public updateSystem(uri: string = '', update: any) {
     return this.httpClient.patch(`${uri}/api/system`, update);
   }
-
 
   private otaUpdate(file: File | Blob, url: string) {
     return new Observable<HttpEvent<string>>((subscriber) => {
